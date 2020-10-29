@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 import ContactForm from "./ContactForm";
 
 test("renders App without crashing", () => {
@@ -14,11 +14,11 @@ test("user can fill out and submit form", async () => {
   const firstNameInput = screen.getByLabelText(/first name/i);
   const lastNameInput = screen.getByLabelText(/last name/i);
   const email = screen.getByLabelText(/email/i);
-  const message = screen.getByLabelText(/last name/i);
+  const message = screen.getByLabelText(/message/i);
   const button = screen.getByRole("button");
 
   fireEvent.change(firstNameInput, {
-    target: { name: "firstName", value: "Mat" },
+    target: { name: "firstName", value: "Matt" },
   });
   fireEvent.change(lastNameInput, {
     target: { name: "lastName", value: "McMatty" },
@@ -31,8 +31,19 @@ test("user can fill out and submit form", async () => {
     fireEvent.click(button);
 
  // Assert
-    const lastNameText = await screen.getByText(/McMatty/i);
+  await waitFor(() => {
+    // const error = screen.getByText(/error/i)
+    // console.log(error);
+    const firstNameText = screen.getByText(/Matt/i);
+    expect(firstNameText).toBeVisible();
+    const lastNameText = screen.getByText(/McMatty/i);
     expect(lastNameText).toBeVisible();
+    const emailText = screen.getByText(/one@two.com/i);
+    expect(emailText).toBeVisible();
+    const messageText = screen.getByText(/This is a test message./i);
+    expect(messageText).toBeVisible();
+
+  })
 
  
 });
